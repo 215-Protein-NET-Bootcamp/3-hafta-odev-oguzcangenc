@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeTrackingV2.Entities.Concrete
+namespace EmployeeTrackingV2.Entities
 {
     public class Person
     {

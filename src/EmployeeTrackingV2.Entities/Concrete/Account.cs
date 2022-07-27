@@ -1,4 +1,4 @@
-﻿namespace EmployeeTrackingV2.Entities.Concrete
+﻿namespace EmployeeTrackingV2.Entities
 {
     public class Account
     {
