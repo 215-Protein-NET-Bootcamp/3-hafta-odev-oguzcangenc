@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EmployeeTrackingV2.Entities
+﻿namespace JWTAuth.Entities
 {
     public class Person
     {
@@ -15,6 +9,8 @@ namespace EmployeeTrackingV2.Entities
         public string Description { get; set; }
         public string Phone { get; set; }
         public DateTime DateOfBirth { get; set; }
-        
+        public int AccountId { get; set; }
+        public Account Account { get; set; }
+
     }
 }

@@ -1,4 +1,4 @@
-namespace EmployeeTrackingV2.Tests
+namespace JWTAuth.Tests
 {
     public class UnitTest1
     {

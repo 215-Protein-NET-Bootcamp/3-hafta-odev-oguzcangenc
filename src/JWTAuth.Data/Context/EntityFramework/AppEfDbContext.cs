@@ -1,5 +1,4 @@
-﻿using EmployeeTrackingV2.Entities;
-using EmployeeTrackingV2.Entities.Concrete;
+﻿using JWTAuth.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,17 +6,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeTrackingV2.Data.Context.EntityFramework
+namespace JWTAuth.Data
 {
     public class AppEfDbContext : DbContext
     {
         public AppEfDbContext(DbContextOptions options) : base(options)
         {
+
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
         }
 
         DbSet<Person> Persons { get; set; }
         DbSet<Account> Accounts { get; set; }
-        DbSet<Folder> Folders { get; set; }
+      
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
        
     }
 }

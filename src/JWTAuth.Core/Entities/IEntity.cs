@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeTrackingV2.Data
+namespace JWTAuth.Core.Entities
 {
-    public class AppDapperDbContext
+    public interface IEntity
     {
     }
 }

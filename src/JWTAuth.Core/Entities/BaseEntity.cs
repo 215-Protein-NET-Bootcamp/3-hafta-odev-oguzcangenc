@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeTrackingV2.Core.Entities
+namespace JWTAuth.Core.Entities
 {
     public class BaseEntity
     {
