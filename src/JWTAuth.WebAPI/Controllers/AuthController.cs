@@ -1,4 +1,5 @@
 ﻿using JWTAuth.Business;
+using JWTAuth.Core;
 using JWTAuth.Entities;
 using JWTAuth.Entities.Dto;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace JWTAuth.WebAPI.Controllers
         }
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult> Login(UserForLoginDto userForLoginDto)
+        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = await _authService.Login(userForLoginDto);
             if (!userToLogin.Success)
@@ -29,7 +30,7 @@ namespace JWTAuth.WebAPI.Controllers
 
             var result = _authService.CreateAccessToken(userToLogin.Data);
             if (result.Success)
-            { 
+            {
                 return Ok(result.Data);
             }
 
@@ -37,14 +38,14 @@ namespace JWTAuth.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserForRegisterDto userForRegisterDto)
+        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            var userExists = await _authService.UserExists(userForRegisterDto.Email,userForRegisterDto.UserName);
+            var userExists = await _authService.UserExists(userForRegisterDto.Email, userForRegisterDto.UserName);
             if (!userExists.Success)
             {
                 return BadRequest(userExists);
             }
-            var registerResult =await  _authService.Register(userForRegisterDto);
+            var registerResult = await _authService.Register(userForRegisterDto);
             if (registerResult.Success)
             {
                 return Ok(registerResult);
@@ -53,17 +54,29 @@ namespace JWTAuth.WebAPI.Controllers
         }
         [Authorize]
         [HttpPost("change-password")]
-        public async Task<ActionResult> ChangePassword(UserForChangePassword userForChangePassword)
+        public async Task<IActionResult> ChangePassword(UserForChangePassword userForChangePassword)
         {
-            int userId = int.Parse(User.Claims.Where(x => x.Type == "AccountId").FirstOrDefault().Value);
-            var userExists = await _authService.ChangePassword(userForChangePassword.OldPassword, userForChangePassword.NewPassword, userForChangePassword.ConfirmNewPassword, userId);
-            if (!userExists.Success)
+            int userId = int.Parse(User.Claims.First(x => x.Type == "AccountId").Value);
+            var response = await _authService.ChangePassword(userForChangePassword.OldPassword, userForChangePassword.NewPassword, userForChangePassword.ConfirmNewPassword, userId);
+            if (!response.Success)
             {
-                return BadRequest(userExists);
+                return BadRequest(response);
             }
-           
-            return BadRequest();
+            
+            return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("get-user-info")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            int userId = int.Parse(User.Claims.First(x => x.Type == "AccountId").Value);
+            var response = await _authService.GetUserInfo(userId);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
     }
 }

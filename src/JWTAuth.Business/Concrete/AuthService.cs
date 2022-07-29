@@ -12,43 +12,53 @@ namespace JWTAuth.Business
         private readonly IApplicationUserService _applicationUserService;
         private readonly ITokenHelper _tokenHelper;
         private readonly IUnitOfWork _unitOfWork;
-
-        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper, IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _applicationUserService = applicationUserService;
             _tokenHelper = tokenHelper;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
-
         public async Task<IResult> ChangePassword(string oldPassword, string newPassword, string confirmNewPassword, int userId)
         {
             var user = (await _applicationUserService.GetById(userId)).Data;
             if (!HashingHelper.VerifyPassowrdHash(oldPassword, user.PasswordHash, user.PasswordSalt))
             {
-                return new ErrorDataResult<ApplicationUser>(user, "Eski Şifre Hatalı");
+                return new ErrorResult("Eski Şifre Hatalı");
 
             }
             HashingHelper.CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            var response = _applicationUserService.Update(user);
+            user.ModifiedDate = DateTime.UtcNow;
+            var result = _applicationUserService.Update(user);
             await _unitOfWork.CompleteAsync();
-            if (response.Success)
+            var response = _mapper.Map<ApplicationUserReadDto>(user);
+            if (result.Success)
             {
-               return new SuccessDataResult<ApplicationUser>(user, "Şifre Başarıyla Değiştirildi...");
+                return new SuccessDataResult<ApplicationUserReadDto>(response, "Şifre Başarıyla Değiştirildi...");
 
             }
-            return new ErrorDataResult<ApplicationUser>(user, "Şifre Değiştirme Hatası..");
+            return new ErrorResult("Şifre Değiştirme Hatası..");
 
         }
-
         public IDataResult<AccessToken> CreateAccessToken(ApplicationUser user)
         {
-            User user1 = new();
-            user1 = user;
-
-            var accessToken = _tokenHelper.CreateToken(user1);
+            var accessToken = _tokenHelper.CreateToken(user);
             return new SuccessDataResult<AccessToken>(accessToken, "Token Oluşturuldu");
+        }
+        public async Task<IDataResult<ApplicationUserReadDto>> GetUserInfo(int userId)
+        {
+            var user = await _applicationUserService.GetById(userId);
+            var mappingUser = _mapper.Map<ApplicationUserReadDto>(user.Data);
+            if (user.Success)
+            {
+                return new SuccessDataResult<ApplicationUserReadDto>(mappingUser, "Kullanıcı Bilgisi Başarıyla Getirildi");
+            }
+            return new ErrorDataResult<ApplicationUserReadDto>("Kullanıcı Bulunamadı....");
+
+
         }
         public async Task<IDataResult<ApplicationUser>> Login(UserForLoginDto userForLoginDto)
         {

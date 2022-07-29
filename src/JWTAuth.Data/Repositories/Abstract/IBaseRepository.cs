@@ -9,8 +9,8 @@ namespace JWTAuth.Data
 {
     public interface IBaseRepository<TEntity>
     {
-        Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null);
-        Task<TEntity> Get(Expression<Func<TEntity, bool>> filter = null);
+        Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null);
+        Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter = null);
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);

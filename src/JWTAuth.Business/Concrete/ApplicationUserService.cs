@@ -37,7 +37,7 @@ namespace JWTAuth.Business
 
         public async Task<IDataResult<ApplicationUser>> GetById(int id)
         {
-            var response = await _applicationUserRepository.Get(user => user.Id == id);
+            var response = await _applicationUserRepository.GetAsync(user => user.Id == id);
             if (response == null)
             {
                 return new ErrorDataResult<ApplicationUser>();
@@ -47,7 +47,7 @@ namespace JWTAuth.Business
 
         public async Task<IDataResult<ApplicationUser>> GetByMail(string mail)
         {
-            var response = await _applicationUserRepository.Get(user => user.Email == mail);
+            var response = await _applicationUserRepository.GetAsync(user => user.Email == mail);
             if (response == null)
             {
                 return new ErrorDataResult<ApplicationUser>();
@@ -57,7 +57,7 @@ namespace JWTAuth.Business
 
         public async Task<IDataResult<ApplicationUser>> GetByMailAndUsername(string mail, string username)
         {
-            var response = await _applicationUserRepository.Get(user => user.Email == mail || user.UserName == username);
+            var response = await _applicationUserRepository.GetAsync(user => user.Email == mail || user.UserName == username);
             if (response == null)
             {
                 return new ErrorDataResult<ApplicationUser>();
@@ -73,7 +73,7 @@ namespace JWTAuth.Business
         public IResult Update(ApplicationUser user)
         {
             _applicationUserRepository.Update(user);
-            return new SuccessResult();
+            return new SuccessDataResult<ApplicationUser>(user);
         }
     }
 }

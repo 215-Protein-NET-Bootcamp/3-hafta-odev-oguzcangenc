@@ -27,12 +27,12 @@ namespace JWTAuth.Data
             entities.Remove(entity);
         }
 
-        public async Task<TEntity> Get(Expression<Func<TEntity, bool>> filter = null)
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter = null)
         {
             return await entities.Where(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null)
         {
             return await (filter == null ? entities.ToListAsync() : entities.Where(filter).ToListAsync());
         }
