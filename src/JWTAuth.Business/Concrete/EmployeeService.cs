@@ -33,9 +33,10 @@ namespace JWTAuth.Business
             await _unitOfWork.CompleteAsync();
             return new SuccessDataResult<EmployeeAddDto>(employee, "Çalışan Kayıt Oldu...");
         }
-        public async Task<IResult> DeleteAsync(Employee employee)
+        public async Task<IResult> DeleteAsync(EmployeeReadDto employeeReadDto)
         {
-            _employeeRepository.Delete(employee);
+            var deletedUser = _mapper.Map<Employee>(employeeReadDto);
+            _employeeRepository.Delete(deletedUser);
             await _unitOfWork.CompleteAsync();
             return new SuccessResult("Çalışan Silindi");
         }

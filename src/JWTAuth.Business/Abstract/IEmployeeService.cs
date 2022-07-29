@@ -14,7 +14,7 @@ namespace JWTAuth.Business
         Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id);
         Task<IResult> AddAsync(EmployeeAddDto employee);
         Task<IResult> UpdateAsync(EmployeeUpdateDto employee);
-        Task<IResult> DeleteAsync(Employee employee);
+        Task<IResult> DeleteAsync(EmployeeReadDto employee);
 
 
     }

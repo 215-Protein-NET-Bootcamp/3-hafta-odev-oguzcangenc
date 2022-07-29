@@ -37,7 +37,7 @@ namespace JWTAuth.WebAPI
                         break;
                     default:
                         // unhandled error
-                        messageError = "Internal Server Error";
+                        messageError = error.Message;
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         break;
                 }

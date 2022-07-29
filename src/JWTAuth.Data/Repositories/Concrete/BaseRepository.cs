@@ -29,7 +29,7 @@ namespace JWTAuth.Data
 
         public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter = null)
         {
-            return await entities.Where(filter).FirstOrDefaultAsync();
+            return await entities.AsNoTracking().Where(filter).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null)
