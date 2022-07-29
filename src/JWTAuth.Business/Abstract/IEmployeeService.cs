@@ -12,9 +12,9 @@ namespace JWTAuth.Business
     {
         Task<IDataResult<ICollection<EmployeeReadDto>>> GetAllAsync();
         Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id);
-        Task<IResult> AddAsync(EmployeeAddDto employee,int userId);
-        IResult Update(Employee user);
-        IResult Delete(int employeeId);
+        Task<IResult> AddAsync(EmployeeAddDto employee);
+        Task<IResult> UpdateAsync(EmployeeUpdateDto employee);
+        Task<IResult> DeleteAsync(Employee employee);
 
 
     }

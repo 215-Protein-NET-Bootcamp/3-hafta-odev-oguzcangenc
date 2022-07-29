@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JWTAuth.Data
 {
@@ -18,7 +14,7 @@ namespace JWTAuth.Data
             configurationManager.AddJsonFile("appsettings.json");
             DbContextOptionsBuilder<AppEfDbContext> dbContextOptionsBuilder = new();
             dbContextOptionsBuilder.UseNpgsql(configurationManager.GetConnectionString("DefaultConnection"));
-            return new AppEfDbContext(dbContextOptionsBuilder.Options);
+            return new AppEfDbContext(dbContextOptionsBuilder.Options, new HttpContextAccessor());
         }
     }
 }

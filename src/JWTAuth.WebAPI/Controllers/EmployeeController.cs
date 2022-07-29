@@ -3,8 +3,6 @@ using JWTAuth.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace JWTAuth.WebAPI.Controllers
 {
     [Authorize]
@@ -18,15 +16,19 @@ namespace JWTAuth.WebAPI.Controllers
         {
             _employeeService = employeeService;
         }
-       
-       
 
-      
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var employees = await _employeeService.GetAllAsync();
+            return Ok(employees);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] EmployeeAddDto employeeAddDto)
         {
-           var userId = int.Parse(User.Claims.First(x => x.Type == "AccountId").Value);
-            var response = await _employeeService.AddAsync(employeeAddDto, userId);
+            var response = await _employeeService.AddAsync(employeeAddDto);
             if (response.Success)
             {
                 return Ok(response);
@@ -34,6 +36,16 @@ namespace JWTAuth.WebAPI.Controllers
             return BadRequest();
         }
 
-       
+        [HttpPost("put")]
+        public async Task<IActionResult> Put([FromBody] EmployeeUpdateDto employeeUpdateDto)
+        {
+            var response = await _employeeService.UpdateAsync(employeeUpdateDto);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest();
+        }
+
     }
 }

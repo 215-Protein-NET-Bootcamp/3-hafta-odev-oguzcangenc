@@ -5,6 +5,7 @@ using JWTAuth.WebAPI;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<IHttpContextAccessor,HttpContextAccessor>();
 builder.Services.AddAutoMapperDependecyInjection(builder);
 builder.Services.AddJwtConfigurationService(builder);
 builder.Services.AddCustomSwagger();

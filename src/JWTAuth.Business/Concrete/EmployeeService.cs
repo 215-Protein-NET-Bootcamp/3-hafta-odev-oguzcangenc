@@ -2,6 +2,7 @@
 using JWTAuth.Core;
 using JWTAuth.Data;
 using JWTAuth.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,36 +16,75 @@ namespace JWTAuth.Business
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeRepository _employeeRepository;
-        public EmployeeService(IEmployeeRepository employeeRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public EmployeeService(IEmployeeRepository employeeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _employeeRepository = employeeRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<IResult> AddAsync(EmployeeAddDto employee, int userId)
+        public async Task<IResult> AddAsync(EmployeeAddDto employee)
         {
             var mappingResult = _mapper.Map<Employee>(employee);
-            mappingResult.ApplicationUserId = userId;
+            mappingResult.ApplicationUserId = CurrentUserId;
             await _employeeRepository.AddAsync(mappingResult);
             await _unitOfWork.CompleteAsync();
             return new SuccessDataResult<EmployeeAddDto>(employee, "Çalışan Kayıt Oldu...");
         }
-        public IResult Delete(int employeeId)
+        public async Task<IResult> DeleteAsync(Employee employee)
         {
-            throw new NotImplementedException();
+            _employeeRepository.Delete(employee);
+            await _unitOfWork.CompleteAsync();
+            return new SuccessResult("Çalışan Silindi");
         }
         public async Task<IDataResult<ICollection<EmployeeReadDto>>> GetAllAsync()
         {
             var response = await _employeeRepository.GetAllAsync();
-            return new SuccessDataResult<ICollection<EmployeeReadDto>>(_mapper.Map<ICollection<EmployeeReadDto>>(response));
+            if (response.Count() > 0)
+            {
+                return new SuccessDataResult<ICollection<EmployeeReadDto>>(_mapper.Map<ICollection<EmployeeReadDto>>(response));
+
+            }
+            return new ErrorDataResult<ICollection<EmployeeReadDto>>("Kullanıcı Bulunamadı...");
         }
-        public Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id)
+        public async Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var response = await _employeeRepository.GetAsync(emp => emp.Id == id);
+            if (response != null)
+            {
+                return new SuccessDataResult<EmployeeReadDto>(_mapper.Map<EmployeeReadDto>(response));
+
+            }
+            return new ErrorDataResult<EmployeeReadDto>("Çalışan Bulunamadı");
         }
-        public IResult Update(Employee user)
+        public async Task<IResult> UpdateAsync(EmployeeUpdateDto employee)
         {
-            throw new NotImplementedException();
+            _employeeRepository.Update(_mapper.Map<Employee>(employee));
+            await _unitOfWork.CompleteAsync();
+            return new SuccessResult("Çalışan Güncellendi");
+        }
+
+        public int CurrentUserId
+        {
+            get
+            {
+                if (_httpContextAccessor.HttpContext != null)
+                {
+                    var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(t => t.Type == "AccountId");
+                    if (claimValue != null)
+                    {
+                        return Convert.ToInt32(claimValue.Value);
+                    }
+                    return 0;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            set => throw new NotImplementedException();
         }
     }
 }
