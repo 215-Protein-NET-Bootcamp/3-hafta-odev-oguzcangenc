@@ -35,9 +35,14 @@ namespace JWTAuth.Business
             throw new NotImplementedException();
         }
 
-        public IDataResult<ApplicationUser> GetById(int id)
+        public async Task<IDataResult<ApplicationUser>> GetById(int id)
         {
-            throw new NotImplementedException();
+            var response = await _applicationUserRepository.Get(user => user.Id == id);
+            if (response == null)
+            {
+                return new ErrorDataResult<ApplicationUser>();
+            }
+            return new SuccessDataResult<ApplicationUser>(response);
         }
 
         public async Task<IDataResult<ApplicationUser>> GetByMail(string mail)
@@ -67,7 +72,8 @@ namespace JWTAuth.Business
 
         public IResult Update(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            _applicationUserRepository.Update(user);
+            return new SuccessResult();
         }
     }
 }

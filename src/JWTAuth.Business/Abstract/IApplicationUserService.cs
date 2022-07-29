@@ -14,7 +14,7 @@ namespace JWTAuth.Business
         IResult Update(ApplicationUser user);
         IResult Delete(ApplicationUser user);
         IResult SetUserUpdate(ApplicationUser user);
-        IDataResult<ApplicationUser> GetById(int id);
+        Task<IDataResult<ApplicationUser>> GetById(int id);
         IDataResult<List<ApplicationUser>> GetAll();
         Task<IDataResult<ApplicationUser>> GetByMail(string mail);
 

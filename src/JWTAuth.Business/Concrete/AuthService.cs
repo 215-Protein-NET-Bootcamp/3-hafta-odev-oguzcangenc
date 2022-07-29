@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JWTAuth.Core;
 using JWTAuth.Core.Utilities.Security.Hashing;
+using JWTAuth.Data;
 using JWTAuth.Entities;
 using JWTAuth.Entities.Dto;
 
@@ -10,14 +11,43 @@ namespace JWTAuth.Business
     {
         private readonly IApplicationUserService _applicationUserService;
         private readonly ITokenHelper _tokenHelper;
-        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper, IUnitOfWork unitOfWork)
         {
             _applicationUserService = applicationUserService;
             _tokenHelper = tokenHelper;
+            _unitOfWork = unitOfWork;
         }
+
+        public async Task<IResult> ChangePassword(string oldPassword, string newPassword, string confirmNewPassword, int userId)
+        {
+            var user = (await _applicationUserService.GetById(userId)).Data;
+            if (!HashingHelper.VerifyPassowrdHash(oldPassword, user.PasswordHash, user.PasswordSalt))
+            {
+                return new ErrorDataResult<ApplicationUser>(user, "Eski Şifre Hatalı");
+
+            }
+            HashingHelper.CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            var response = _applicationUserService.Update(user);
+            await _unitOfWork.CompleteAsync();
+            if (response.Success)
+            {
+               return new SuccessDataResult<ApplicationUser>(user, "Şifre Başarıyla Değiştirildi...");
+
+            }
+            return new ErrorDataResult<ApplicationUser>(user, "Şifre Değiştirme Hatası..");
+
+        }
+
         public IDataResult<AccessToken> CreateAccessToken(ApplicationUser user)
         {
-            var accessToken = _tokenHelper.CreateToken(user);
+            User user1 = new();
+            user1 = user;
+
+            var accessToken = _tokenHelper.CreateToken(user1);
             return new SuccessDataResult<AccessToken>(accessToken, "Token Oluşturuldu");
         }
         public async Task<IDataResult<ApplicationUser>> Login(UserForLoginDto userForLoginDto)

@@ -15,5 +15,6 @@ namespace JWTAuth.Business
         Task<IDataResult<ApplicationUser>> Login(UserForLoginDto userForLoginDto);
         Task<IResult> UserExists(string mail, string username);
         IDataResult<AccessToken> CreateAccessToken(ApplicationUser user);
+        Task<IResult> ChangePassword(string oldPassword, string newPassword, string confirmNewPassword,int userId);
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace JWTAuth.Core
+﻿
+namespace JWTAuth.Core
 {
     public interface ITokenHelper
     {

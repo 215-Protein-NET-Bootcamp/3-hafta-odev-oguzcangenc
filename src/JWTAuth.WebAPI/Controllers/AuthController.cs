@@ -1,8 +1,9 @@
 ﻿using JWTAuth.Business;
 using JWTAuth.Entities;
 using JWTAuth.Entities.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Linq;
 
 namespace JWTAuth.WebAPI.Controllers
 {
@@ -16,6 +17,7 @@ namespace JWTAuth.WebAPI.Controllers
         {
             _authService = authService;
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserForLoginDto userForLoginDto)
         {
@@ -49,6 +51,19 @@ namespace JWTAuth.WebAPI.Controllers
             }
             return BadRequest(registerResult);
         }
-       
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<ActionResult> ChangePassword(UserForChangePassword userForChangePassword)
+        {
+            int userId = int.Parse(User.Claims.Where(x => x.Type == "AccountId").FirstOrDefault().Value);
+            var userExists = await _authService.ChangePassword(userForChangePassword.OldPassword, userForChangePassword.NewPassword, userForChangePassword.ConfirmNewPassword, userId);
+            if (!userExists.Success)
+            {
+                return BadRequest(userExists);
+            }
+           
+            return BadRequest();
+        }
+
     }
 }
