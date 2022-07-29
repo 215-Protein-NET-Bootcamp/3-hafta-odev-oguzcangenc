@@ -4,6 +4,7 @@ using JWTAuth.Core.Utilities.Security.Hashing;
 using JWTAuth.Data;
 using JWTAuth.Entities;
 using JWTAuth.Entities.Dto;
+using Microsoft.AspNetCore.Http;
 
 namespace JWTAuth.Business
 {
@@ -13,12 +14,16 @@ namespace JWTAuth.Business
         private readonly ITokenHelper _tokenHelper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuthService(IApplicationUserService applicationUserService, ITokenHelper tokenHelper, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _applicationUserService = applicationUserService;
             _tokenHelper = tokenHelper;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+
         }
         public async Task<IResult> ChangePassword(string oldPassword, string newPassword, string confirmNewPassword, int userId)
         {
@@ -48,9 +53,9 @@ namespace JWTAuth.Business
             var accessToken = _tokenHelper.CreateToken(user);
             return new SuccessDataResult<AccessToken>(accessToken, "Token Oluşturuldu");
         }
-        public async Task<IDataResult<ApplicationUserReadDto>> GetUserInfo(int userId)
+        public async Task<IDataResult<ApplicationUserReadDto>> GetUserInfo()
         {
-            var user = await _applicationUserService.GetById(userId);
+            var user = await _applicationUserService.GetById(CurrentUserId);
             var mappingUser = _mapper.Map<ApplicationUserReadDto>(user.Data);
             if (user.Success)
             {
@@ -60,35 +65,42 @@ namespace JWTAuth.Business
 
 
         }
-        public async Task<IDataResult<ApplicationUser>> Login(UserForLoginDto userForLoginDto)
+        public async Task<IDataResult<AccessToken>> Login(UserForLoginDto userForLoginDto)
         {
             var userToCheck = await _applicationUserService.GetByMail(userForLoginDto.Email);
             if (!userToCheck.Success)
             {
-                return new ErrorDataResult<ApplicationUser>(userToCheck.Data, "Kullanıcı Bulunamadı");
+                return new ErrorDataResult<AccessToken>("Kullanıcı Bulunamadı");
             }
 
             if (!HashingHelper.VerifyPassowrdHash(userForLoginDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
             {
-                return new ErrorDataResult<ApplicationUser>(userToCheck.Data, "Şifre Hatalı");
+                return new ErrorDataResult<AccessToken>("Şifre Hatalı");
             }
+            var resultToken = CreateAccessToken(userToCheck.Data);
+            if (resultToken.Success)
+            {
+                return new SuccessDataResult<AccessToken>(resultToken.Data, "Giriş Başarılı...");
+            }
+            return new ErrorDataResult<AccessToken>("Sistem Hatası...");
 
-            return new SuccessDataResult<ApplicationUser>(userToCheck.Data, "Giriş Başarılı. Yönlendiriliyorsunuz...");
         }
-        public async Task<IDataResult<ApplicationUser>> Register(UserForRegisterDto userForRegisterDto)
+        public async Task<IDataResult<ApplicationUserReadDto>> Register(UserForRegisterDto userForRegisterDto)
         {
             HashingHelper.CreatePasswordHash(userForRegisterDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var user = new ApplicationUser
             {
                 UserName = userForRegisterDto.UserName,
                 Email = userForRegisterDto.Email,
-                FirstName = userForRegisterDto.FirstName,
-                LastName = userForRegisterDto.LastName,
+                Name = userForRegisterDto.Name,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                ModifiedDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                LastActivity = DateTime.UtcNow
             };
             await _applicationUserService.AddAsync(user);
-            return new SuccessDataResult<ApplicationUser>(user, "Kullanıcı Kayıt Oldu");
+            return new SuccessDataResult<ApplicationUserReadDto>(_mapper.Map<ApplicationUserReadDto>(user), "Kullanıcı Kayıt Oldu");
         }
         public async Task<IResult> UserExists(string mail, string username)
         {
@@ -98,6 +110,41 @@ namespace JWTAuth.Business
                 return new ErrorResult("Kullanıcı Zaten Mevcut");
             }
             return new SuccessResult();
+        }
+
+        public async Task<IDataResult<ApplicationUserReadDto>> EditUser(UserForEditDto userForEditDto)
+        {
+            ApplicationUser user = (await _applicationUserService.GetById(CurrentUserId)).Data;
+            if (user != null)
+            {
+                var tempData = _mapper.Map<ApplicationUser>(userForEditDto);
+                user = tempData;
+                await _unitOfWork.CompleteAsync();
+                return new SuccessDataResult<ApplicationUserReadDto>(_mapper.Map<ApplicationUserReadDto>(user));
+            }
+            return new ErrorDataResult<ApplicationUserReadDto>();
+
+        }
+
+        public int CurrentUserId
+        {
+            get
+            {
+                if (_httpContextAccessor.HttpContext != null)
+                {
+                    var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(t => t.Type == "AccountId");
+                    if (claimValue != null)
+                    {
+                        return Convert.ToInt32(claimValue.Value);
+                    }
+                    return 0;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            set => throw new NotImplementedException();
         }
     }
 }

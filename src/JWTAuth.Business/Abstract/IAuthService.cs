@@ -11,11 +11,12 @@ namespace JWTAuth.Business
 {
     public interface IAuthService
     {
-        Task<IDataResult<ApplicationUser>> Register(UserForRegisterDto userForRegisterDto);
-        Task<IDataResult<ApplicationUser>> Login(UserForLoginDto userForLoginDto);
+        Task<IDataResult<ApplicationUserReadDto>> Register(UserForRegisterDto userForRegisterDto);
+        Task<IDataResult<AccessToken>> Login(UserForLoginDto userForLoginDto);
         Task<IResult> UserExists(string mail, string username);
         IDataResult<AccessToken> CreateAccessToken(ApplicationUser user);
         Task<IResult> ChangePassword(string oldPassword, string newPassword, string confirmNewPassword,int userId);
-        Task<IDataResult<ApplicationUserReadDto>> GetUserInfo(int userId);
+        Task<IDataResult<ApplicationUserReadDto>> EditUser(UserForEditDto userForEditDto);
+        Task<IDataResult<ApplicationUserReadDto>> GetUserInfo();
     }
 }

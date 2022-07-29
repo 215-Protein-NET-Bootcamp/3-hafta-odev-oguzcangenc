@@ -36,7 +36,7 @@ namespace JWTAuth.WebAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost("put")]
+        [HttpPut]
         public async Task<IActionResult> Put([FromBody] EmployeeUpdateDto employeeUpdateDto)
         {
             var response = await _employeeService.UpdateAsync(employeeUpdateDto);

@@ -23,18 +23,11 @@ namespace JWTAuth.WebAPI.Controllers
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = await _authService.Login(userForLoginDto);
-            if (!userToLogin.Success)
+            if (userToLogin.Success)
             {
-                return BadRequest(userToLogin.Message);
+                return Ok(userToLogin);
             }
-
-            var result = _authService.CreateAccessToken(userToLogin.Data);
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-
-            return BadRequest(result.Message);
+            return BadRequest(userToLogin);
         }
 
         [HttpPost("register")]
@@ -62,16 +55,26 @@ namespace JWTAuth.WebAPI.Controllers
             {
                 return BadRequest(response);
             }
-            
+
             return Ok(response);
         }
+        [HttpPut("edit-user")]
+        public async Task<IActionResult> EditUser(UserForEditDto userForEditDto)
+        {
 
+            var response = await _authService.EditUser(userForEditDto);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
         [Authorize]
-        [HttpGet("get-user-info")]
+        [HttpGet("get-current-user")]
         public async Task<IActionResult> GetUserInfo()
         {
-            int userId = int.Parse(User.Claims.First(x => x.Type == "AccountId").Value);
-            var response = await _authService.GetUserInfo(userId);
+            var response = await _authService.GetUserInfo();
             if (!response.Success)
             {
                 return BadRequest(response);

@@ -61,7 +61,9 @@ namespace JWTAuth.Business
         }
         public async Task<IResult> UpdateAsync(EmployeeUpdateDto employee)
         {
-            _employeeRepository.Update(_mapper.Map<Employee>(employee));
+            var tempData = _mapper.Map<Employee>(employee);
+            tempData.ApplicationUserId = CurrentUserId;
+            _employeeRepository.Update(tempData);
             await _unitOfWork.CompleteAsync();
             return new SuccessResult("Çalışan Güncellendi");
         }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JWTAuth.Entities;
+using JWTAuth.Entities.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace JWTAuth.Business.Mapper
             CreateMap<ApplicationUserReadDto, ApplicationUser>().ReverseMap();
             CreateMap<EmployeeAddDto, Employee>().ReverseMap();
             CreateMap<EmployeeReadDto, Employee>().ReverseMap();
+            CreateMap<EmployeeUpdateDto, Employee>().ReverseMap();
+            CreateMap<UserForEditDto, ApplicationUser>().ReverseMap();
 
 
         }
