@@ -1,11 +1,5 @@
 ﻿using JWTAuth.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace JWTAuth.Data
 {
     public class AppEfDbContext : DbContext
@@ -19,15 +13,15 @@ namespace JWTAuth.Data
             base.OnConfiguring(optionsBuilder);
         }
 
-        DbSet<Person> Persons { get; set; }
-        DbSet<Account> Accounts { get; set; }
-      
+        DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        DbSet<Employee> Employees { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
         }
 
-       
+
     }
 }

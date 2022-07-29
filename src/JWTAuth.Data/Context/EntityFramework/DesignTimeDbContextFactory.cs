@@ -14,7 +14,7 @@ namespace JWTAuth.Data
         public AppEfDbContext CreateDbContext(string[] args)
         {
             ConfigurationManager configurationManager = new();
-            configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../EmployeeTrackingV2.WebAPI"));
+            configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../JWTAuth.WebAPI"));
             configurationManager.AddJsonFile("appsettings.json");
             DbContextOptionsBuilder<AppEfDbContext> dbContextOptionsBuilder = new();
             dbContextOptionsBuilder.UseNpgsql(configurationManager.GetConnectionString("DefaultConnection"));

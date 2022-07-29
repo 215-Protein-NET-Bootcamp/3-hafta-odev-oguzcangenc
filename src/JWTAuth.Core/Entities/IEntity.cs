@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JWTAuth.Core.Entities
+namespace JWTAuth.Core
 {
     public interface IEntity
     {

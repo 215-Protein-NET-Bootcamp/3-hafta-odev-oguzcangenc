@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JWTAuth.Core
+namespace JWTAuth.Data
 {
-    public interface IDto
+    public interface IUnitOfWork : IDisposable
     {
+        Task CompleteAsync();
     }
 }

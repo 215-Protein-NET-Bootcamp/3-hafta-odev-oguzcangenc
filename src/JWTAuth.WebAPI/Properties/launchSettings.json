@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "EmployeeTrackingV2.WebAPI": {
+    "JWTAuth.WebAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
