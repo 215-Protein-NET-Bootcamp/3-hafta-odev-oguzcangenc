@@ -111,19 +111,31 @@ namespace JWTAuth.Business
             }
             return new SuccessResult();
         }
-
         public async Task<IDataResult<ApplicationUserReadDto>> EditUser(UserForEditDto userForEditDto)
         {
             ApplicationUser user = (await _applicationUserService.GetById(CurrentUserId)).Data;
             if (user != null)
             {
-                var tempData = _mapper.Map<ApplicationUser>(userForEditDto);
-                user = tempData;
+                user.Name = userForEditDto.Name;
+                user.ModifiedDate = DateTime.UtcNow;
+                user.LastActivity = DateTime.UtcNow;
+                _applicationUserService.Update(user);
                 await _unitOfWork.CompleteAsync();
                 return new SuccessDataResult<ApplicationUserReadDto>(_mapper.Map<ApplicationUserReadDto>(user));
             }
             return new ErrorDataResult<ApplicationUserReadDto>();
 
+        }
+
+        public async Task<IResult> DeleteAuth()
+        {
+            var user = await _applicationUserService.GetById(CurrentUserId);
+            var response =await _applicationUserService.Delete(user.Data);
+            if (response.Success)
+            {
+                return new SuccessResult();
+            }
+            return new ErrorResult();
         }
 
         public int CurrentUserId

@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using JWTAuth.Core;
 using JWTAuth.Data;
 using JWTAuth.Entities;
@@ -11,7 +9,6 @@ namespace JWTAuth.Business
     {
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public ApplicationUserService(IApplicationUserRepository applicationUserRepository, IUnitOfWork unitOfWork)
         {
             _applicationUserRepository = applicationUserRepository;
@@ -24,17 +21,13 @@ namespace JWTAuth.Business
             return new SuccessResult();
 
         }
-
-        public IResult Delete(ApplicationUser user)
+        public async Task<IResult> Delete(ApplicationUser user)
         {
-            throw new NotImplementedException();
-        }
+            _applicationUserRepository.Delete(user);
+            await _unitOfWork.CompleteAsync();
 
-        public IDataResult<List<ApplicationUser>> GetAll()
-        {
-            throw new NotImplementedException();
+            return new SuccessResult("App User Silindi...");
         }
-
         public async Task<IDataResult<ApplicationUser>> GetById(int id)
         {
             var response = await _applicationUserRepository.GetAsync(user => user.Id == id);
@@ -44,7 +37,6 @@ namespace JWTAuth.Business
             }
             return new SuccessDataResult<ApplicationUser>(response);
         }
-
         public async Task<IDataResult<ApplicationUser>> GetByMail(string mail)
         {
             var response = await _applicationUserRepository.GetAsync(user => user.Email == mail);
@@ -54,7 +46,6 @@ namespace JWTAuth.Business
             }
             return new SuccessDataResult<ApplicationUser>(response);
         }
-
         public async Task<IDataResult<ApplicationUser>> GetByMailAndUsername(string mail, string username)
         {
             var response = await _applicationUserRepository.GetAsync(user => user.Email == mail || user.UserName == username);
@@ -64,12 +55,6 @@ namespace JWTAuth.Business
             }
             return new SuccessDataResult<ApplicationUser>();
         }
-
-        public IResult SetUserUpdate(ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
-
         public IResult Update(ApplicationUser user)
         {
             _applicationUserRepository.Update(user);

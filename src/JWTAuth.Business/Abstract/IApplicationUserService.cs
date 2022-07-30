@@ -12,12 +12,9 @@ namespace JWTAuth.Business
     {
         Task<IResult> AddAsync(ApplicationUser user);
         IResult Update(ApplicationUser user);
-        IResult Delete(ApplicationUser user);
-        IResult SetUserUpdate(ApplicationUser user);
+        Task<IResult> Delete(ApplicationUser user);
         Task<IDataResult<ApplicationUser>> GetById(int id);
-        IDataResult<List<ApplicationUser>> GetAll();
         Task<IDataResult<ApplicationUser>> GetByMail(string mail);
-
         Task<IDataResult<ApplicationUser>> GetByMailAndUsername(string mail, string username);
     }
 }

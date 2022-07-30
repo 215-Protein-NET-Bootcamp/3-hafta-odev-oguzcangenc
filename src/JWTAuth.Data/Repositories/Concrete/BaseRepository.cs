@@ -34,9 +34,9 @@ namespace JWTAuth.Data
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null)
         {
-            return await (filter == null ? entities.ToListAsync() : entities.Where(filter).ToListAsync());
+            return await (filter == null ? entities.AsNoTracking().ToListAsync() : entities.AsNoTracking().Where(filter).ToListAsync());
         }
-
+        
         public void Update(TEntity entity)
         {
             entities.Update(entity);

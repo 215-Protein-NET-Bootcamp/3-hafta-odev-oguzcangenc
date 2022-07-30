@@ -16,8 +16,6 @@ namespace JWTAuth.WebAPI.Controllers
         {
             _employeeService = employeeService;
         }
-
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -58,7 +56,7 @@ namespace JWTAuth.WebAPI.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleteEmployee = await _employeeService.GetByIdAsync(id);

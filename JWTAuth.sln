@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuth.WebAPI", "src\JWTAu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTAuth.Tests", "tests\JWTAuth.Tests\JWTAuth.Tests.csproj", "{06CC779A-2D72-48E9-9520-FDF988DE649C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{B65F883B-EFAD-4610-8A31-02A19AEAFE75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

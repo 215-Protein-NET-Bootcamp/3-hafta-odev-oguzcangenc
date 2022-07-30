@@ -58,11 +58,26 @@ namespace JWTAuth.WebAPI.Controllers
 
             return Ok(response);
         }
+        
+        [Authorize]
         [HttpPut("edit-user")]
         public async Task<IActionResult> EditUser(UserForEditDto userForEditDto)
         {
 
             var response = await _authService.EditUser(userForEditDto);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+        [Authorize]
+        [HttpDelete("delete-auth")]
+        public async Task<IActionResult> DeleteAuth()
+        {
+
+            var response = await _authService.DeleteAuth();
             if (!response.Success)
             {
                 return BadRequest(response);
