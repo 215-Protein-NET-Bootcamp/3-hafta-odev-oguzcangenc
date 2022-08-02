@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JWTAuth.Business.Constant;
 using JWTAuth.Core;
 using JWTAuth.Data;
 using JWTAuth.Entities;
@@ -31,14 +32,14 @@ namespace JWTAuth.Business
             mappingResult.ApplicationUserId = CurrentUserId;
             await _employeeRepository.AddAsync(mappingResult);
             await _unitOfWork.CompleteAsync();
-            return new SuccessDataResult<EmployeeAddDto>(employee, "Çalışan Kayıt Oldu...");
+            return new SuccessDataResult<EmployeeAddDto>(employee, Messages.ADD_APPLICATON_USER);
         }
         public async Task<IResult> DeleteAsync(EmployeeReadDto employeeReadDto)
         {
             var deletedUser = _mapper.Map<Employee>(employeeReadDto);
             _employeeRepository.Delete(deletedUser);
             await _unitOfWork.CompleteAsync();
-            return new SuccessResult("Çalışan Silindi");
+            return new SuccessResult(Messages.DELETE_APPLICATION_USER);
         }
         public async Task<IDataResult<ICollection<EmployeeReadDto>>> GetAllAsync()
         {
@@ -49,7 +50,7 @@ namespace JWTAuth.Business
                 return new SuccessDataResult<ICollection<EmployeeReadDto>>(_mapper.Map<ICollection<EmployeeReadDto>>(response));
 
             }
-            return new ErrorDataResult<ICollection<EmployeeReadDto>>("Kullanıcı Bulunamadı...");
+            return new ErrorDataResult<ICollection<EmployeeReadDto>>(Messages.USER_NOTFOUND);
         }
         public async Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id)
         {
@@ -59,7 +60,7 @@ namespace JWTAuth.Business
                 return new SuccessDataResult<EmployeeReadDto>(_mapper.Map<EmployeeReadDto>(response));
 
             }
-            return new ErrorDataResult<EmployeeReadDto>("Çalışan Bulunamadı");
+            return new ErrorDataResult<EmployeeReadDto>(Messages.USER_NOTFOUND);
         }
         public async Task<IResult> UpdateAsync(EmployeeUpdateDto employee)
         {
@@ -67,7 +68,7 @@ namespace JWTAuth.Business
             tempData.ApplicationUserId = CurrentUserId;
             _employeeRepository.Update(tempData);
             await _unitOfWork.CompleteAsync();
-            return new SuccessResult("Çalışan Güncellendi");
+            return new SuccessResult(Messages.SUCCESS_TRANSACTION);
         }
 
         public int CurrentUserId

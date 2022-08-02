@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JWTAuth.Business.Constant;
 using JWTAuth.Core;
 using JWTAuth.Core.Utilities.Security.Hashing;
 using JWTAuth.Data;
@@ -30,7 +31,7 @@ namespace JWTAuth.Business
             var user = (await _applicationUserService.GetById(userId)).Data;
             if (!HashingHelper.VerifyPassowrdHash(oldPassword, user.PasswordHash, user.PasswordSalt))
             {
-                return new ErrorResult("Eski Şifre Hatalı");
+                return new ErrorResult(Messages.OLD_PASSWORD_INCORRECT);
 
             }
             HashingHelper.CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
@@ -42,16 +43,16 @@ namespace JWTAuth.Business
             var response = _mapper.Map<ApplicationUserReadDto>(user);
             if (result.Success)
             {
-                return new SuccessDataResult<ApplicationUserReadDto>(response, "Şifre Başarıyla Değiştirildi...");
+                return new SuccessDataResult<ApplicationUserReadDto>(response,Messages.CHANGE_PASSWORD_SUCCESS);
 
             }
-            return new ErrorResult("Şifre Değiştirme Hatası..");
+            return new ErrorResult(Messages.CHANGE_PASSWORD_ERROR);
 
         }
         public IDataResult<AccessToken> CreateAccessToken(ApplicationUser user)
         {
             var accessToken = _tokenHelper.CreateToken(user);
-            return new SuccessDataResult<AccessToken>(accessToken, "Token Oluşturuldu");
+            return new SuccessDataResult<AccessToken>(accessToken,Messages.TOKEN_GENERATE);
         }
         public async Task<IDataResult<ApplicationUserReadDto>> GetUserInfo()
         {
@@ -59,9 +60,9 @@ namespace JWTAuth.Business
             var mappingUser = _mapper.Map<ApplicationUserReadDto>(user.Data);
             if (user.Success)
             {
-                return new SuccessDataResult<ApplicationUserReadDto>(mappingUser, "Kullanıcı Bilgisi Başarıyla Getirildi");
+                return new SuccessDataResult<ApplicationUserReadDto>(mappingUser,Messages.GET_APPLICATION_USER);
             }
-            return new ErrorDataResult<ApplicationUserReadDto>("Kullanıcı Bulunamadı....");
+            return new ErrorDataResult<ApplicationUserReadDto>(Messages.USER_NOTFOUND);
 
 
         }
@@ -70,19 +71,19 @@ namespace JWTAuth.Business
             var userToCheck = await _applicationUserService.GetByMail(userForLoginDto.Email);
             if (!userToCheck.Success)
             {
-                return new ErrorDataResult<AccessToken>("Kullanıcı Bulunamadı");
+                return new ErrorDataResult<AccessToken>(Messages.USER_NOTFOUND);
             }
 
             if (!HashingHelper.VerifyPassowrdHash(userForLoginDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
             {
-                return new ErrorDataResult<AccessToken>("Şifre Hatalı");
+                return new ErrorDataResult<AccessToken>(Messages.PASSWORD_INCORRECT);
             }
             var resultToken = CreateAccessToken(userToCheck.Data);
             if (resultToken.Success)
             {
-                return new SuccessDataResult<AccessToken>(resultToken.Data, "Giriş Başarılı...");
+                return new SuccessDataResult<AccessToken>(resultToken.Data,Messages.LOGIN_SUCCESS);
             }
-            return new ErrorDataResult<AccessToken>("Sistem Hatası...");
+            return new ErrorDataResult<AccessToken>(Messages.SYSTEM_ERROR);
 
         }
         public async Task<IDataResult<ApplicationUserReadDto>> Register(UserForRegisterDto userForRegisterDto)
@@ -100,14 +101,14 @@ namespace JWTAuth.Business
                 LastActivity = DateTime.UtcNow
             };
             await _applicationUserService.AddAsync(user);
-            return new SuccessDataResult<ApplicationUserReadDto>(_mapper.Map<ApplicationUserReadDto>(user), "Kullanıcı Kayıt Oldu");
+            return new SuccessDataResult<ApplicationUserReadDto>(_mapper.Map<ApplicationUserReadDto>(user),Messages.REGISTER_USER);
         }
         public async Task<IResult> UserExists(string mail, string username)
         {
             var result = await _applicationUserService.GetByMailAndUsername(mail, username);
             if (result.Success)
             {
-                return new ErrorResult("Kullanıcı Zaten Mevcut");
+                return new ErrorResult(Messages.USER_ALREADY_EXISTS);
             }
             return new SuccessResult();
         }
@@ -133,9 +134,9 @@ namespace JWTAuth.Business
             var response =await _applicationUserService.Delete(user.Data);
             if (response.Success)
             {
-                return new SuccessResult();
+                return new SuccessResult(Messages.SUCCESS_TRANSACTION);
             }
-            return new ErrorResult();
+            return new ErrorResult(Messages.SYSTEM_ERROR);
         }
 
         public int CurrentUserId

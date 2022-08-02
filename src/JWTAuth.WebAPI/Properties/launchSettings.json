@@ -10,7 +10,7 @@
     }
   },
   "profiles": {
-    "JWTAuth.WebAPI": {
+    "JWTAuth.WebAPI.Development": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -18,6 +18,16 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:7172;http://localhost:5172",
+      "dotnetRunMessages": true
+    },
+    "JWTAuth.WebAPI.Production": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "https://localhost:8192;http://localhost:8193",
       "dotnetRunMessages": true
     },
     "IIS Express": {

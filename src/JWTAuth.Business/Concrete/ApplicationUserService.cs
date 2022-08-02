@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JWTAuth.Business.Constant;
 using JWTAuth.Core;
 using JWTAuth.Data;
 using JWTAuth.Entities;
@@ -18,7 +19,7 @@ namespace JWTAuth.Business
         {
             await _applicationUserRepository.AddAsync(user);
             await _unitOfWork.CompleteAsync();
-            return new SuccessResult();
+            return new SuccessResult(Messages.ADD_APPLICATON_USER);
 
         }
         public async Task<IResult> Delete(ApplicationUser user)
@@ -26,7 +27,7 @@ namespace JWTAuth.Business
             _applicationUserRepository.Delete(user);
             await _unitOfWork.CompleteAsync();
 
-            return new SuccessResult("App User Silindi...");
+            return new SuccessResult(Messages.DELETE_APPLICATION_USER);
         }
         public async Task<IDataResult<ApplicationUser>> GetById(int id)
         {
@@ -35,7 +36,7 @@ namespace JWTAuth.Business
             {
                 return new ErrorDataResult<ApplicationUser>();
             }
-            return new SuccessDataResult<ApplicationUser>(response);
+            return new SuccessDataResult<ApplicationUser>(response,Messages.GET_APPLICATION_USER_BY_ID);
         }
         public async Task<IDataResult<ApplicationUser>> GetByMail(string mail)
         {
