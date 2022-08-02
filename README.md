@@ -1,4 +1,15 @@
-# 3-hafta-odev-oguzcangenc
+# 3. Hafta Ödev - Oğuzcan Genç
+[![https://exchange-rates-data-api.herokuapp.com/swagger/index.html](https://github.com/215-Protein-NET-Bootcamp/3-hafta-odev-oguzcangenc/blob/master/images/live-demo-button.png)](https://ouzdev-jwt.herokuapp.com/swagger/index.html)
+## Technologies Used
+* ASP.Net 6.0 
+* PostgreSQL
+* Json Web Token (JWT)
+* Swagger
+* Fluent Validation
+* Serilog & Seq
+* Docker
+* Heroku
+
 ## Login Endpoint
 ![alt text](https://github.com/215-Protein-NET-Bootcamp/3-hafta-odev-oguzcangenc/blob/master/images/1.png)
 ## Register Endpoint
