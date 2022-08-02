@@ -23,6 +23,7 @@ namespace JWTAuth.WebAPI
                                   ValidateIssuerSigningKey = true,
                                   IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                               };
+
                           });
         }
     }

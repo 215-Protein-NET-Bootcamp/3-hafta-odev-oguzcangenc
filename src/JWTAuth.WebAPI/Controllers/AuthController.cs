@@ -85,6 +85,7 @@ namespace JWTAuth.WebAPI.Controllers
 
             return Ok(response);
         }
+        [TypeFilter(typeof(CustomAuthorizationFilter))]
         [Authorize]
         [HttpGet("get-current-user")]
         public async Task<IActionResult> GetUserInfo()

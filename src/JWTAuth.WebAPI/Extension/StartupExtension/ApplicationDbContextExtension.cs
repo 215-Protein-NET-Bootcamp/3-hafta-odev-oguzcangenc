@@ -9,9 +9,10 @@ namespace JWTAuth.WebAPI
         {
             services.AddDbContext<AppEfDbContext>(opt =>
             {
-                
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+
         }
     }
 }
