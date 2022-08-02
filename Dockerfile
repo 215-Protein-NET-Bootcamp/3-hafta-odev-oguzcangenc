@@ -23,4 +23,4 @@ RUN dotnet publish "JWTAuth.WebAPI.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "JWTAuth.WebAPI.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet JWTAuth.WebAPI.dll

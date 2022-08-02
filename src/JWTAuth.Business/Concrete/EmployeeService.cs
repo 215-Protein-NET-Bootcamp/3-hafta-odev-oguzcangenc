@@ -42,7 +42,8 @@ namespace JWTAuth.Business
         }
         public async Task<IDataResult<ICollection<EmployeeReadDto>>> GetAllAsync()
         {
-            var response = await _employeeRepository.GetAllAsync();
+            
+            var response = await _employeeRepository.GetAllAsync(user => user.ApplicationUserId == CurrentUserId);
             if (response.Count() > 0)
             {
                 return new SuccessDataResult<ICollection<EmployeeReadDto>>(_mapper.Map<ICollection<EmployeeReadDto>>(response));
@@ -52,7 +53,7 @@ namespace JWTAuth.Business
         }
         public async Task<IDataResult<EmployeeReadDto>> GetByIdAsync(int id)
         {
-            var response = await _employeeRepository.GetAsync(emp => emp.Id == id);
+            var response = await _employeeRepository.GetAsync(emp => emp.Id == id && emp.ApplicationUserId == CurrentUserId);
             if (response != null)
             {
                 return new SuccessDataResult<EmployeeReadDto>(_mapper.Map<EmployeeReadDto>(response));

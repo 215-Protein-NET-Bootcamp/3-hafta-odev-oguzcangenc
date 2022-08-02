@@ -47,7 +47,7 @@ namespace JWTAuth.WebAPI.Controllers
         }
         [Authorize]
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword(UserForChangePassword userForChangePassword)
+        public async Task<IActionResult> ChangePassword(UserForChangePasswordDto userForChangePassword)
         {
             int userId = int.Parse(User.Claims.First(x => x.Type == "AccountId").Value);
             var response = await _authService.ChangePassword(userForChangePassword.OldPassword, userForChangePassword.NewPassword, userForChangePassword.ConfirmNewPassword, userId);
@@ -76,16 +76,13 @@ namespace JWTAuth.WebAPI.Controllers
         [HttpDelete("delete-auth")]
         public async Task<IActionResult> DeleteAuth()
         {
-
             var response = await _authService.DeleteAuth();
             if (!response.Success)
             {
                 return BadRequest(response);
             }
-
             return Ok(response);
         }
-        [TypeFilter(typeof(CustomAuthorizationFilter))]
         [Authorize]
         [HttpGet("get-current-user")]
         public async Task<IActionResult> GetUserInfo()

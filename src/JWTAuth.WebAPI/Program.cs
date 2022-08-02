@@ -1,15 +1,20 @@
+using FluentValidation.AspNetCore;
 using JWTAuth.Business;
 using JWTAuth.Core;
 using JWTAuth.Data;
 using JWTAuth.WebAPI;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+                .AddFluentValidation(c => c.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
+
 builder.Host.UseSerilogExtension();
-builder.Services.AddTransient<IHttpContextAccessor,HttpContextAccessor>();
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddAutoMapperDependecyInjection(builder);
 builder.Services.AddJwtConfigurationService(builder);
 builder.Services.AddCustomSwagger();
@@ -27,7 +32,7 @@ using (var scope = app.Services.CreateScope())
 }
 if (app.Environment.IsDevelopment())
 {
-    
+
 }
 app.UseSwagger();
 app.UseSwaggerUI(opt =>

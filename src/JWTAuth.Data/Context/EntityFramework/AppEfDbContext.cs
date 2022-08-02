@@ -22,36 +22,10 @@ namespace JWTAuth.Data
 
         DbSet<ApplicationUser> ApplicationUsers { get; set; }
         DbSet<Employee> Employees { get; set; }
-        public int CurrentUserId
-        {
-            get
-            {
-                if (_httpContextAccessor.HttpContext != null)
-                {
-                    var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(t=>t.Type=="AccountId");
-                    if (claimValue != null)
-                    {
-                        return Convert.ToInt32(claimValue.Value);
-                    }
-                    return 0;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            set => throw new NotImplementedException();
-        }
-
+      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-                modelBuilder.Entity<Employee>().HasQueryFilter(e => e.ApplicationUserId == CurrentUserId);
-            
             base.OnModelCreating(modelBuilder);
-
         }
-
-
     }
 }

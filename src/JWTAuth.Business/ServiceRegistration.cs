@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using JWTAuth.Business.Validations.FluentValidation;
+using JWTAuth.Entities;
+using JWTAuth.Entities.Dto;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +19,12 @@ namespace JWTAuth.Business
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
             services.AddScoped<IAuthService, AuthService>();
 
+            services.AddSingleton<IValidator<UserForLoginDto>, UserForLoginDtoValidator>();
+            services.AddSingleton<IValidator<UserForRegisterDto>, UserForRegisterDtoValidator>();
+            services.AddSingleton<IValidator<UserForChangePasswordDto>, UserForChangePasswordDtoValidator>();
+            services.AddSingleton<IValidator<UserForEditDto>, UserForEditDtoValidator>();
+
+            services.AddSingleton<IValidator<EmployeeAddDto>, EmployeeAddDtoValidator>();
         }
     }
 }

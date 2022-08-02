@@ -1,5 +1,4 @@
-﻿
-using JWTAuth.Core;
+﻿using JWTAuth.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
