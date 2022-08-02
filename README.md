@@ -2,6 +2,7 @@
 [![https://exchange-rates-data-api.herokuapp.com/swagger/index.html](https://github.com/215-Protein-NET-Bootcamp/3-hafta-odev-oguzcangenc/blob/master/images/live-demo-button.png)](https://ouzdev-jwt.herokuapp.com/swagger/index.html)
 ## Technologies Used
 * ASP.Net 6.0 
+* Entity Framework Core 6.0
 * PostgreSQL
 * Json Web Token (JWT)
 * Swagger
